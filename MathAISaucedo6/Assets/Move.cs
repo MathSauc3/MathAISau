@@ -3,19 +3,22 @@ using UnityEngine;
 
 public class Move : MonoBehaviour {
 
-    public GameObject goal;
-    Vector3 direction;
-    float speed = 0.5f;
+    public float speed = 2.0f;
+    public Transform goal;
+    public float accuracy = 0.01f;
 
     void Start()
     {
-        direction = goal.transform.position - transform.position;
+       
     }
 
     private void LateUpdate()
     {
-        Vector3 velocity = direction.normalized * speed * Time.deltaTime;
-        this.transform.position = this.transform.position + velocity;
+        this.transform.LookAt(goal.position);
+        Vector3 direction = goal.position - this.transform.position;
+        Debug.DrawRay(this.transform.position, direction,Color.red);
+        if (direction.magnitude > accuracy)  
+        this.transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
 
     }
 }
