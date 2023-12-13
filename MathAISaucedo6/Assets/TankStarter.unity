@@ -405,7 +405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   rotationSpeed: 100
-  Fuel: {fileID: 724142933}
+  fuel: {fileID: 724142933}
 --- !u!850595691 &1374592261
 LightingSettings:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class Drive : MonoBehaviour
     public float speed = 10.0f;
     public float rotationSpeed = 100.0f;
 
-    public GameObject Fuel;
+    public GameObject fuel;
 
     void Start()
     {
@@ -18,17 +18,43 @@ public class Drive : MonoBehaviour
 
     void CalculateAngle()
     {
-        Vector3 tF = this.transform.position;
-        Vector3 fD = Fuel.transform.position - this.transform.forward;  
+        Vector3 tF = this.transform.up;
+        Vector3 fD = fuel.transform.position - this.transform.position;
 
-        Debug.DrawRay(this.transform.position, tF, Color.green, 2);
-        Debug.DrawRay(this.transform.position, fD, Color.red, 2);
+        float dot = tF.x * fD.x + tF.y * fD.y;
+        float angle =
+            Mathf.Acos (dot/(tF.magnitude * fD.magnitude));
+
+        Debug.Log ("Angle = " + angle * Mathf.Rad2Deg);
+        Debug.Log("Unity Angle: " + Vector3.Angle(tF, fD));
+
+        Debug.DrawRay(this.transform.position, tF, Color.green, 20);
+        Debug.DrawRay(this.transform.position, fD, Color.red, 20);
+
+        int clockwise = 1;
+        if (Cross(tF, fD).z < 0)
+            clockwise = -1;
+
+        float unityAngle = Vector3.SignedAngle(tF, fD, this.transform.forward);
+
+        this.transform.Rotate(0, 0, unityAngle ) ;
+    }
+
+    Vector3 Cross(Vector3 v, Vector3 w)
+    {
+        float xMult = v.y * w.z - v.z * w.y;
+        float yMult = v.z * w.x - v.x * w.z;
+        float zMult = v.x * w.y - v.y * w.x;
+
+        Vector3 crossProd = new Vector3(xMult, yMult, zMult);
+        return crossProd;
+
     }
 
     void CalculateDistance()
     {
         Vector3 tankPosition = this.transform.position;
-        Vector3 fuelPosition = Fuel.transform.position;
+        Vector3 fuelPosition = fuel.transform.position;
 
         float distance = Mathf.Sqrt(
             Mathf.Pow(tankPosition.x - fuelPosition.x, 2) + Mathf.Pow(tankPosition.y - fuelPosition.y, 2));
@@ -53,10 +79,11 @@ public class Drive : MonoBehaviour
 
         // Rotate around our y-axis
         transform.Rotate(0, 0, -rotation);
-        
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetMouseButtonDown(0)) 
         {
             CalculateAngle();
+            CalculateDistance();
         }
 
     }
